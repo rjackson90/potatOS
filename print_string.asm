@@ -25,51 +25,51 @@ print_char:
     ret
 
 ; Convert the hex digit in bl to ASCII
-hex_to_char:
-    add bl, 0x30
-    cmp bl, 0x3a
-    jl ($ + 3)
-    add bl, 0x7
-    ret
+;hex_to_char:
+;    add bl, 0x30
+;    cmp bl, 0x3a
+;    jl ($ + 3)
+;    add bl, 0x7
+;    ret
 
 ; Print the value of bl to the console, as hex
-print_hex_byte:
-    mov ch, bl
-    shr ch, 4
-    
-    mov cl, bl
-    and cl, 0x0F
-    
-    mov bl, ch
-    call hex_to_char
-    call print_char
-
-    mov bl, cl
-    call hex_to_char
-    call print_char
-
-    ret
+;print_hex_byte:
+;    mov ch, bl
+;    shr ch, 4
+;    
+;    mov cl, bl
+;    and cl, 0x0F
+;    
+;    mov bl, ch
+;    call hex_to_char
+;    call print_char
+;
+;    mov bl, cl
+;    call hex_to_char
+;    call print_char
+;
+;    ret
 
     
 ; Print the word stored in bx as hex
-print_hex_word:
-    push bx
-
-    mov bl, '0'
-    call print_char
-
-    mov bl, 'x'
-    call print_char
-
-    pop bx
-    push bx
-    shr bx, 8
-    call print_hex_byte
-
-    pop bx
-    call print_hex_byte
-
-    ret
+;print_hex_word:
+;    push bx
+;
+;    mov bl, '0'
+;    call print_char
+;
+;    mov bl, 'x'
+;    call print_char
+;
+;    pop bx
+;    push bx
+;    shr bx, 8
+;    call print_hex_byte
+;
+;    pop bx
+;    call print_hex_byte
+;
+;    ret
 
 ; Start a new line
 print_new_line:

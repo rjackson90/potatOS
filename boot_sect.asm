@@ -15,21 +15,10 @@
     mov bx, 0x000c              ; light red background, black border
     int 0x10    
 
-    mov bx, BOOT_MSG                        
+    mov bx, BOOT_MSG            ; Inform user of entry to Real Mode            
     call print_string
 
-    mov bx, 0x9000              ; Load 2 sectors to 0x0000(ES):0x9000(BX)
-    mov dh, 2                   ; from the boot disk
-    mov dl, [BOOT_DRIVE]
-    call disk_load
-
-    mov bx, [0x9000]            ; Print the first word from the first loaded sector,
-    call print_hex_word         ; to confirm data integrity
-    call print_new_line
-
-    mov bx, [0x9000 + 512]      ; Print the first word from the second loaded sector
-    call print_hex_word
-    call print_new_line
+    call load_kernel            ; load the kernel
 
     mov bx, PM_SWITCH_MSG       ; Inform the user of PM bring-up
     call print_string
@@ -43,21 +32,34 @@
 %include "mode_switch.asm"
 %include "pm_print_string.asm"
 
+[bits 16]
+load_kernel:
+    mov bx, LOAD_KERNEL_MSG     ; Inform the user that we are loading the kernel
+    call print_string
+
+    mov bx, KERNEL_OFFSET       ;
+    mov dh, 1                   ; Read the kernel from disk into memory at offset
+    mov dl, [BOOT_DRIVE]        ; 0x1000, which is our preselected "magic offset"
+    call disk_load              ;
+
+    ret
+
 [bits 32]
 BEGIN_PM:
-    mov ebx, PM_ENTER_MSG
+    mov ebx, PM_ENTER_MSG       ; Inform the user that 32-bit mode has been entered
     call print_string_pm
+
+    mov ebx, KERNEL_ENTER_MSG   ; Looks like we're gonna have to jump...!
+    call print_string_pm
+
+    call KERNEL_OFFSET          ; Grab your ankles and kiss your ass goodbye, we're
+                                ; jumping into the loaded kernel. Cowabunga, dudes!
 
     jmp $
 
 ;   Data
 BOOT_MSG:
     db  "Boot sector loaded. Running in 16-bit real mode."
-    dw CRLF
-    dw 0
-
-HALT_MSG:
-    db "System halt."
     dw CRLF
     dw 0
 
@@ -70,13 +72,20 @@ PM_ENTER_MSG:
     db "Now running in 32-bit mode."
     db 0
 
+LOAD_KERNEL_MSG:
+    db "Loading kernel from disk."
+    dw CRLF
+    dw 0
+
+KERNEL_ENTER_MSG:
+    db "Passing control to kernel."
+    db 0
+
 BOOT_DRIVE:
     db 0
+
+KERNEL_OFFSET equ 0x1000
 
 ;   Padding and magic number
 times 510 - ($-$$) db 0
 dw 0xaa55
-
-;   Add a couple more sectors to the image
-times 256 dw 0xbeef
-times 256 dw 0xface
