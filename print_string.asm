@@ -51,4 +51,37 @@ print_hex_byte:
     ret
 
     
+; Print the word stored in bx as hex
+print_hex_word:
+    push bx
 
+    mov bl, '0'
+    call print_char
+
+    mov bl, 'x'
+    call print_char
+
+    pop bx
+    push bx
+    shr bx, 8
+    call print_hex_byte
+
+    pop bx
+    call print_hex_byte
+
+    ret
+
+; Start a new line
+print_new_line:
+    push bx
+    mov bx, ENDL
+    call print_string
+    pop bx
+    ret
+
+; Data
+CRLF:   equ     0x0a0d
+
+ENDL:
+    dw CRLF
+    dw 0
