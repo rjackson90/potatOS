@@ -1,40 +1,9 @@
-#.PHONY: all
-#all : bin/osimage.img
-
-#.PHONY: qemu
-#qemu : bin/osimage.img
-#	qemu-system-i386 -vga std -cpu Haswell $<
-
-#bin/boot_sect.bin : boot/boot_sect.asm
-#	nasm -f bin -I boot -o $@ $<
-
-#bin/kernel_entry.elf : arch/kernel_entry.asm
-#	nasm -f elf -o $@ $<
-
-#.c.o:
-#	gcc -m32 -ffreestanding -std=c11 -Iinclude -c src/$< -o bin/$@
-
-#bin/kernel.bin : bin/kernel_entry.elf bin/kernel.o bin/video.o
-#	ld -melf_i386 -o $@ -Ttext 0x1000 $^ --oformat binary
-
-#bin/osimage.img : bin/boot_sect.bin bin/kernel.bin
-#	cat $^ > $@
-
-#.PHONY: clean
-#clean :
-#	rm -f bin/*
-#	touch bin/.gitkeep
-
-
-###############################################################################
-
 # Project name - will be used to create the name of the final binary image
 TARGET = PotatOS.img
 
-CC = gcc
-
 # C Compiler flags
-CFLAGS = -m32 -ffreestanding -std=c11 -I$(INCLUDE_DIR)
+CC = gcc
+CFLAGS = -m32 -ffreestanding -std=c11 -Wall -pedantic -I$(INCLUDE_DIR)
 
 # Linker and flags
 LINKER = ld

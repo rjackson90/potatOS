@@ -27,7 +27,10 @@ static inline char style(BIOS_COLORS text, BIOS_COLORS bg) {
     return (((char) text) & 0x0f) | (((char) bg) << 4);
 }
 
+void htos(unsigned int data, char *buffer, int buf_len);
+
 void write_char(int offset, char ch, char attr);
 void write_string(int offset, char *string, char attr);
+
 
 #endif //VIDEO_H
